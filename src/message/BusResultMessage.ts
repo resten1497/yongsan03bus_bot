@@ -1,3 +1,5 @@
+import { busResult } from "../interface/busResult.interface";
+
 export const busResultMessage = (resultObject: busResult) => {
   const responseTeplate = {
     version: "2.0",

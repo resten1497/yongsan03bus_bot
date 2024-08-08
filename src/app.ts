@@ -1,12 +1,15 @@
-import * as dotenv from "dotenv";
-dotenv.config();
+import { configDotenv } from "dotenv";
+import "dotenv/config";
 
+configDotenv({ path: "./custom/path" });
+console.log(process.env);
 import { getBusTime } from "./api";
 import xml2js, { XmlDeclarationAttributes } from "xml2js";
 import express from "express";
 import bodyParser from "body-parser";
 import { getBusImage, getBusSize } from "./util";
 import { busResultMessage } from "./message";
+import { busResult } from "../src/interface/busResult.interface";
 
 var fs = require("fs");
 const app = express();
@@ -37,7 +40,7 @@ app.post("/", function (req, res) {
   res.status(200).send(responseBody);
 });
 
-const PromiseParser = (data) => {
+const PromiseParser = (data: string): Promise<any> => {
   return new Promise((resolve, reject) => {
     parser.parseString(data, (err, result) => {
       if (err) {
@@ -50,9 +53,10 @@ const PromiseParser = (data) => {
 
 app.post("/getBusArriveInformation", async (req, res) => {
   let arsId = req.body.action.params.arsid;
+
   let data = await getBusTime(arsId);
+  console.log(data);
   const result = await PromiseParser(data);
-  let resultObject: busResult;
   let itemList = result.ServiceResult.msgBody.itemList;
   if (itemList.length > 1) {
     itemList = result.ServiceResult.msgBody.itemList[0];
@@ -61,6 +65,12 @@ app.post("/getBusArriveInformation", async (req, res) => {
   let arrmsg2 = itemList.arrmsg2;
   let veh1 = itemList.vehId1;
   let veh2 = itemList.vehId2;
+  let resultObject: busResult = {
+    stNm: "",
+    Image: "",
+    description: "",
+  };
+
   resultObject.stNm = itemList.stNm;
   console.log(itemList);
 
@@ -127,7 +137,7 @@ app.get("/test", (req, res) => {
 
 app.get("/img/:name", (req, res) => {
   var filename = "./src/assets/Image/" + req.params.name;
-  fs.readFile(filename, (err, data) => {
+  fs.readFile(filename, (err: NodeJS.ErrnoException | null, data: Buffer) => {
     res.writeHead(200, { "Context-Type": "image/jpg" }); //보낼 헤더를 만듬
     res.write(data); //본문을 만들고
     res.end(); //클라이언트에게 응답을 전송한다

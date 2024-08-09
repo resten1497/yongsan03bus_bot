@@ -2,7 +2,6 @@ import { configDotenv } from "dotenv";
 import "dotenv/config";
 
 configDotenv({ path: "./custom/path" });
-console.log(process.env);
 import { getBusTime } from "./api";
 import xml2js, { XmlDeclarationAttributes } from "xml2js";
 import express from "express";

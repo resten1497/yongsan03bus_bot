@@ -1,0 +1,12 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: my-node-app # 컨테이너 이름을 지정합니다.
+    ports:
+      - "32773:3000" # 호스트의 포트 3000을 컨테이너의 포트 3000에 매핑합니다.
+    volumes:
+      - .:/app # 현재 디렉토리를 컨테이너의 /app 디렉토리에 매핑하여 코드 변경이 실시간으로 반영되도록 합니다.
+
+    command: ["npm", "start"] # 컨테이너가 시작될 때 실행할 명령어를 지정합니다.

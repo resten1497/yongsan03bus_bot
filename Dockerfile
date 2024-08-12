@@ -1,4 +1,4 @@
-FROM node:22
+FROM --platform=linux/amd64 node:22
 
 LABEL Sang Hyeon
 # 작성자의 이름을 적습니다. 

@@ -2,6 +2,9 @@ import { configDotenv } from "dotenv";
 import "dotenv/config";
 
 configDotenv({ path: "./custom/path" });
+
+import "./instrument";
+
 import { getBusTime } from "./api";
 import xml2js, { XmlDeclarationAttributes } from "xml2js";
 import express from "express";
@@ -9,6 +12,7 @@ import bodyParser from "body-parser";
 import { getBusImage, getBusSize } from "./util";
 import { busResultMessage } from "./message";
 import { busResult } from "../src/interface/busResult.interface";
+import * as Sentry from "@sentry/node";
 
 var fs = require("fs");
 const app = express();
@@ -20,6 +24,8 @@ const parser = new xml2js.Parser({
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+Sentry.setupExpressErrorHandler(app);
 
 app.post("/", function (req, res) {
   const responseBody = {
@@ -52,9 +58,7 @@ const PromiseParser = (data: string): Promise<any> => {
 
 app.post("/getBusArriveInformation", async (req, res) => {
   let arsId = req.body.action.params.arsid;
-
   let data = await getBusTime(arsId);
-  console.log(data);
   const result = await PromiseParser(data);
   let itemList = result.ServiceResult.msgBody.itemList;
   if (itemList.length > 1) {
@@ -71,7 +75,6 @@ app.post("/getBusArriveInformation", async (req, res) => {
   };
 
   resultObject.stNm = itemList.stNm;
-  console.log(itemList);
 
   if (arrmsg1 !== "운행종료") {
     switch (arrmsg1) {
@@ -117,21 +120,11 @@ app.post("/getBusArriveInformation", async (req, res) => {
       resultObject.description += "다음 버스 : " + arrmsg2;
     }
     resultObject.Image =
-      "http://13.125.72.93/img/" +
+      `${req.protocol}://${req.get("host")}/img/` +
       getBusImage(getBusSize(veh1).code, getBusSize(veh2).code);
     res.status(200).send(busResultMessage(resultObject));
   } else {
   }
-
-  console.log(resultObject);
-});
-
-app.get("/test", (req, res) => {
-  getBusTime("03567").then((response) => {
-    parser.parseString(response, (err, result) => {
-      console.log(result["ServiceResult"]["msgBody"]["itemList"]["arrmsg1"]);
-    });
-  });
 });
 
 app.get("/img/:name", (req, res) => {

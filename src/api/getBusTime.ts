@@ -10,7 +10,6 @@ const getBusTime = (arsID: string) => {
   queryParams +=
     "&" + encodeURIComponent("arsId") + "=" + encodeURIComponent(arsID); /* */
   url = url + queryParams;
-  console.log(url);
   return axios.get(url).then((response: AxiosResponse) => {
     return response.data;
   });

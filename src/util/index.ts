@@ -1,4 +1,4 @@
-import {getBusSize} from "./getBusSize";
-import {getBusImage} from "./getBusImage";
+import { getBusSize } from "./getBusSize";
+import { getBusImage } from "./getBusImage";
 
-export {getBusSize,getBusImage}
+export { getBusSize, getBusImage };

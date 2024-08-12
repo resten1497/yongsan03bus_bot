@@ -1,4 +1,4 @@
-name: Test Docker Hub Connection
+name: Auto Deploy DockerHub
 
 on:
   push:

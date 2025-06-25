@@ -27,6 +27,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 Sentry.setupExpressErrorHandler(app);
 
+app.get("/", function (req, res) {
+  res.send(200);
+});
 app.post("/", function (req, res) {
   const responseBody = {
     version: "2.0",
@@ -125,6 +128,10 @@ app.post("/getBusArriveInformation", async (req, res) => {
     res.status(200).send(busResultMessage(resultObject));
   } else {
   }
+});
+
+app.post("/getBuspredictionArrive", async (req, res) => {
+  const START_ARSID: string = "03500";
 });
 
 app.get("/img/:name", (req, res) => {

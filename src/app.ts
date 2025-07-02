@@ -89,19 +89,27 @@ app.post("/getBusArriveInformation", async (req, res) => {
         resultObject.description = "이번 버스 : " + arrmsg1 + "\n";
         break;
       default:
-        let split_Minute1 = arrmsg1.split("분");
-        let Station_result1 = split_Minute1[1]
-          .split("[")[1]
-          .slice(0, -1)
-          .replace("번째", "정류장");
-        resultObject.description =
-          "이번 버스 : " +
-          getBusSize(veh1).label +
-          "\n" +
-          Station_result1 +
-          ", " +
-          split_Minute1[0] +
-          "분 후 도착\n";
+        if (
+          typeof arrmsg1 === "string" &&
+          arrmsg1.includes("분") &&
+          arrmsg1.includes("[")
+        ) {
+          let split_Minute1 = arrmsg1.split("분");
+          let Station_result1 = split_Minute1[1]
+            .split("[")[1]
+            .slice(0, -1)
+            .replace("번째", "정류장");
+          resultObject.description =
+            "이번 버스 : " +
+            getBusSize(veh1).label +
+            "\n" +
+            Station_result1 +
+            ", " +
+            split_Minute1[0] +
+            "분 후 도착\n";
+        } else {
+          resultObject.description = "도착 정보 없음\n";
+        }
         break;
     }
 
